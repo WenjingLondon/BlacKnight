@@ -29,8 +29,8 @@ contract StrategyManager is Ownable {
     }
 
     // 用户绑定策略和资金分配
-    function assignStrategy(address _strategy, uint256 _allocation) external {
-        require(strategyFactory.isValidStrategy(_strategy), "Invalid strategy");
+    function assignStrategy(address _token, address _strategy, uint256 _allocation) external {
+        require(strategyFactory.isValidStrategy(_token, _strategy), "Invalid strategy");
         UserPortfolio storage portfolio = userPortfolios[msg.sender];
         portfolio.strategies.push(_strategy);
         portfolio.allocations[_strategy] = _allocation;
@@ -38,7 +38,7 @@ contract StrategyManager is Ownable {
     }
 
     // 调整策略组合（再平衡）
-    function rebalance(address[] calldata _strategies, uint256[] calldata _allocations) external {
+    function rebalance(address _token, address[] calldata _strategies, uint256[] calldata _allocations) external {
     require(_strategies.length == _allocations.length, "Mismatched arrays");
 
     uint256 totalAllocation = 0;
@@ -54,7 +54,7 @@ contract StrategyManager is Ownable {
 
     // 重新分配策略
     for (uint256 i = 0; i < _strategies.length; i++) {
-        require(strategyFactory.isValidStrategy(_strategies[i]), "Invalid strategy");
+        require(strategyFactory.isValidStrategy(_token, _strategies[i]), "Invalid strategy");
         portfolio.strategies.push(_strategies[i]);
         portfolio.allocations[_strategies[i]] = _allocations[i];
     }

@@ -7,7 +7,6 @@ import "../Interfaces/IStrategy.sol";
 import "../Interfaces/IPoolAddressesProvider.sol";
 import "../Interfaces/IPool.sol";
 import "../Interfaces/IAToken.sol";
-
 /**
  * @title AaveStrategy
  * @dev 简洁优化版，支持 Aave V3 交互，符合你的项目架构与逻辑
@@ -21,13 +20,14 @@ contract AaveStrategy is IStrategy {
     constructor(address _addressesProvider) {
         require(_addressesProvider != address(0), "Invalid provider");
         addressesProvider = IPoolAddressesProvider(_addressesProvider);
-        aavePool = IPool(addressesProvider.getPool());
+        address poolAddress = addressesProvider.getPool();
+        aavePool = IPool(poolAddress);
     }
 
     /**
      * @dev 存入资产到 Aave（由 aggregator 或 manager 合约调用）
      */
-    function invest(address token, uint256 amount) external override {
+    function deposit(address token, uint256 amount) external override {
         require(amount > 0, "Amount must be greater than 0");
         require(token != address(0), "Invalid token");
 
@@ -41,9 +41,9 @@ contract AaveStrategy is IStrategy {
         }
     }
 
-    function deposit(address token, uint256 amount) external override {
+    // function deposit(address token, uint256 amount) external override {
     
-    }
+    // }
 
     /**
      * @dev 从 Aave 取回资产

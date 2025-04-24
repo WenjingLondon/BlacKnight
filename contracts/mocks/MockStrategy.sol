@@ -7,17 +7,17 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract MockStrategy is IStrategy {
     mapping(address => uint256) public balances;
 
-    function invest(address token, uint256 amount) external override {
+    function deposit(address token, uint256 amount) external override {
         IERC20(token).transferFrom(msg.sender, address(this), amount);
         balances[token] += amount;
     }
     
-   function deposit(address token, uint256 amount) external override {
-    // TODO: your deposit logic
-}
+//    function deposit(address token, uint256 amount) external override {
+//     // TODO: your deposit logic
+// }
 
 function getAPY(address token) external view override returns (uint256) {
-    return 0; // temporary placeholder
+    return 1; // temporary placeholder
 }
 
 

@@ -37,7 +37,7 @@ contract CurveStrategy is IStrategy {
     }
 
     // ✅ 存款（将 Token 存入对应的 Curve 池）
-    function invest(address token, uint256 amount) external override {
+    function deposit(address token, uint256 amount) external override {
         require(amount > 0, "Amount must be greater than zero");
         address curvePool = tokenToCurvePool[token];
         require(curvePool != address(0), "No Curve pool for this token");
@@ -49,8 +49,8 @@ contract CurveStrategy is IStrategy {
         ICurveLendingPool(curvePool).add_liquidity(amounts, 0);
     }
 
-    function deposit(address token, uint256 amount) external override {
-    }
+    // function deposit(address token, uint256 amount) external override {
+    // }
     
     // ✅ 取款（从 Curve 池提取 Token）
     function withdraw(address token, uint256 amount) external override {
