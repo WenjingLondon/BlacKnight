@@ -3,77 +3,98 @@ pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../Interfaces/IStrategy.sol";
-
 import "../Interfaces/IPoolAddressesProvider.sol";
 import "../Interfaces/IPool.sol";
 import "../Interfaces/IAToken.sol";
-/**
- * @title AaveStrategy
- * @dev 简洁优化版，支持 Aave V3 交互，符合你的项目架构与逻辑
- */
+
 contract AaveStrategy is IStrategy {
     IPoolAddressesProvider public immutable addressesProvider;
     IPool public immutable aavePool;
 
-    mapping(address => address) public aTokens; // token => aToken
+    // Mapping of token to aToken (aTokens are held by the strategy contract)
+    mapping(address => address) public aTokens;
+
+    event Deposited(address indexed user, address token, uint256 amount);
+    event Withdrawn(address indexed user, address token, uint256 amount);
 
     constructor(address _addressesProvider) {
         require(_addressesProvider != address(0), "Invalid provider");
         addressesProvider = IPoolAddressesProvider(_addressesProvider);
-        address poolAddress = addressesProvider.getPool();
-        aavePool = IPool(poolAddress);
+        aavePool = IPool(addressesProvider.getPool());
     }
 
-    /**
-     * @dev 存入资产到 Aave（由 aggregator 或 manager 合约调用）
-     */
+    // Deposit function
     function deposit(address token, uint256 amount) external override {
         require(amount > 0, "Amount must be greater than 0");
         require(token != address(0), "Invalid token");
 
-        IERC20(token).transferFrom(msg.sender, address(this), amount);
-        IERC20(token).approve(address(aavePool), amount);
+        // Transfer tokens from user to strategy contract
+        bool success = IERC20(token).transferFrom(msg.sender, address(this), amount);
+        require(success, "TransferFrom failed");
 
-        aavePool.supply(token, amount, address(this), 0);
+        // Approve Aave pool if needed
+        uint256 allowance = IERC20(token).allowance(address(this), address(aavePool));
+        if (allowance < amount) {
+            if (allowance > 0) {
+                IERC20(token).approve(address(aavePool), 0);
+            }
+            IERC20(token).approve(address(aavePool), type(uint256).max);
+        }
 
+        // Get the aToken address if not already mapped
         if (aTokens[token] == address(0)) {
             aTokens[token] = aavePool.getReserveData(token).aTokenAddress;
         }
+
+        // Supply tokens to Aave pool
+        aavePool.supply(token, amount, address(this), 0);
+
+        address aToken = aTokens[token];
+
+        // Transfer the aTokens to the user immediately after the deposit
+        uint256 aTokenAmount = amount;  // Typically 1 token = 1 aToken at deposit
+        bool successAToken = IERC20(aToken).transfer(msg.sender, aTokenAmount);
+        require(successAToken, "aToken transfer failed");
+
+        emit Deposited(msg.sender, token, amount);
     }
 
-    // function deposit(address token, uint256 amount) external override {
-    
-    // }
-
-    /**
-     * @dev 从 Aave 取回资产
-     */
+    // Withdraw function
     function withdraw(address token, uint256 amount) external override {
         require(token != address(0), "Invalid token");
-        require(getTotalBalance(token) >= amount, "Insufficient balance");
 
-        aavePool.withdraw(token, amount, msg.sender);
+        address aToken = aTokens[token];
+        require(aToken != address(0), "Invalid aToken address");
+
+        // Transfer the aTokens from the user to the strategy contract
+        bool successAToken = IERC20(aToken).transferFrom(msg.sender, address(this), amount);
+        require(successAToken, "aToken transfer failed");
+
+        // Check if the strategy contract holds enough aTokens
+        uint256 aTokenBalance = getTotalBalance(token);
+        require(aTokenBalance >= amount, "Insufficient aToken balance");
+
+        // Proceed with withdrawal from Aave, burning the aTokens
+        aavePool.withdraw(token, amount, address(this));
+        bool successToken = IERC20(token).transfer(msg.sender, amount);
+        require(successToken, "Token transfer failed");
+        emit Withdrawn(msg.sender, token, amount);
     }
 
-    /**
-     * @dev 获取当前策略中 token 的存入余额（通过 aToken 查询）
-     */
+    // Function to get the total aToken balance held by the strategy contract
     function getTotalBalance(address token) public view override returns (uint256) {
         address aToken = aTokens[token];
         if (aToken == address(0)) return 0;
-
         return IERC20(aToken).balanceOf(address(this));
     }
 
-    /**
-     * @dev 返回当前 token 的年化收益率估算值（基于 Aave 提供的 liquidityRate）
-     * 注意：这是 APR 的线性近似，未复利
-     */
+    // Function to get the current APY for a token
     function getAPY(address token) public view returns (uint256) {
-        // liquidityRate 是 Ray（1e27）
         DataTypes.ReserveData memory reserve = aavePool.getReserveData(token);
-        uint256 liquidityRate = reserve.currentLiquidityRate;
-        return liquidityRate / 1e9; // 转换为近似年利率，单位为 1e18
+        return reserve.currentLiquidityRate / 1e9; // Return APY in percentage
+    }
+
+    function getATokenAddress(address token) public view returns (address) {
+        return aTokens[token];
     }
 }
-

@@ -8,4 +8,5 @@ interface IStrategy {
     function deposit(address token, uint256 amount) external;
     function getAPY(address token) external view returns (uint256);
     function getTotalBalance(address token) external view returns (uint256);
+    function getATokenAddress(address token) external view returns (address);
 }

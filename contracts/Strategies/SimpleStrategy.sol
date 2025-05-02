@@ -25,6 +25,10 @@ contract SimpleStrategy is IStrategy {
         return balances[_token];
     }
 
+    function getATokenAddress(address _token) external view override returns (address) {
+        return address(0);
+    }
+
     // function invest(address _token, uint256 _amount) external override {
     //     // 简化处理：视为立即投资（模拟逻辑）
     //     balances[_token] += _amount;

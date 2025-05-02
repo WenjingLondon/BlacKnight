@@ -1,17 +1,21 @@
 require("dotenv").config();
 require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-verify");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   networks: {
     hardhat: {
       forking: {
-        url: `https://sepolia.infura.io/v3/${process.env.INFURA_KEY}`,
+        url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
         accounts: [`${process.env.PRIVATE_KEY}`],
+      },
+      sourcify: {
+        enabled: true,
       },
     },
     sepolia: {
-      url: `https://sepolia.infura.io/v3/${process.env.INFURA_KEY}`,
+      url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
       accounts: [`${process.env.PRIVATE_KEY}`],
     },
   },
@@ -27,7 +31,7 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
-      sepolia: process.env.ETH_SEPOLIA_API_KEY,
+      sepolia: "66RCGFDV81VBSQSS4MFBA7KY46M9XX8BW4",
     },
   },
 

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Invest & Redeem</title>
+  <link rel="stylesheet" href="invest.css">
+
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- 左侧 Token 列表 -->
+    <aside class="sidebar">
+      <h2>Token List</h2>
+      <ul class="token-list">
+        <li onclick="selectToken('0xTokenAddress1')">Token A</li>
+        <li onclick="selectToken('0xTokenAddress2')">Token B</li>
+        <li onclick="selectToken('0xTokenAddress3')">Token C</li>
+      </ul>
+    </aside>
+
+    <!-- 右侧主操作区域 -->
+    <main class="main-content">
+      <h1>Auto Yield</h1>
+
+      <div class="form-block">
+        <h3>Invest</h3>
+        <input type="text" id="tokenAddress" placeholder="Token Address" />
+        <input type="number" id="amount" placeholder="Amount to Invest" />
+        <button onclick="invest()">Invest</button>
+      </div>
+
+      <div class="form-block">
+        <h3>Redeem</h3>
+        <input type="text" id="redeemTokenAddress" placeholder="Token Address" />
+        <input type="number" id="redeemAmount" placeholder="Amount to Redeem" />
+        <button onclick="redeem()">Redeem</button>
+      </div>
+
+      <p id="status"></p>
+    </main>
+
+  </div>
+
+  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+  <script src="js/invest.js"></script>
+</body>
+</html>

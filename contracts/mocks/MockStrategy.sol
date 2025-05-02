@@ -30,5 +30,9 @@ function getAPY(address token) external view override returns (uint256) {
     function getTotalBalance(address token) external view override returns (uint256) {
         return balances[token];
     }
+
+    function getATokenAddress(address token) external view override returns (address) {
+        return address(0);
+    }
 }
 

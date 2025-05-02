@@ -86,6 +86,10 @@ contract CurveStrategy is IStrategy {
     function getTotalBalance(address token) external view override returns (uint256) {
         return IERC20(token).balanceOf(address(this));
     }
+
+    function getATokenAddress(address token) public view returns (address) {
+        return tokenToCurveLPToken[token];
+    }
 }
 
 

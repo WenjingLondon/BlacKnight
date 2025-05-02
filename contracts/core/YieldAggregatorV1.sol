@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../Interfaces/IStrategy.sol";
 import "../Strategies/StrategyFactory.sol";
 import "./FeeManager.sol";
+import "hardhat/console.sol";
 
 contract YieldAggregatorV1 {
     address public owner;
@@ -31,9 +32,8 @@ contract YieldAggregatorV1 {
         feeManager = FeeManager(_feeManager);
     }
 
-    function deposit(address token, uint256 amount) external {
+    function deposit(address token, uint256 amount) external payable {
         require(amount > 0, "Amount must be greater than 0");
-
         IERC20(token).transferFrom(msg.sender, address(this), amount);
         balances[msg.sender][token] += amount;
 
@@ -43,14 +43,20 @@ contract YieldAggregatorV1 {
         IERC20(token).approve(bestStrategy, amount);
         IStrategy(bestStrategy).deposit(token, amount);
 
+        address aToken = IStrategy(bestStrategy).getATokenAddress(token);
+        IERC20(aToken).transfer(msg.sender, amount);
+
         emit Deposited(msg.sender, token, amount);
     }
 
-    function withdraw(address token, uint256 amount) external {
+    function withdraw(address token, uint256 amount) external payable {
         require(balances[msg.sender][token] >= amount, "Insufficient balance");
 
         address strategy = strategyFactory.getBestStrategy(token);
         require(strategy != address(0), "No strategy available");
+
+        address aToken = IStrategy(strategy).getATokenAddress(token);
+        IERC20(aToken).transferFrom(msg.sender, address(this), amount);
 
         IStrategy(strategy).withdraw(token, amount);
         IERC20(token).transfer(msg.sender, amount);
