@@ -5,7 +5,7 @@ import "../Interfaces/IStrategy.sol";
 
 contract SimpleStrategy is IStrategy {
     mapping(address => uint256) private balances;
-    uint256 private apy = 5;  // 固定5%收益
+    uint256 private apy = 1;  // 固定5%收益
 
     function deposit(address _token, uint256 _amount) external override {
         // 模拟存款逻辑：增加用户资金记录

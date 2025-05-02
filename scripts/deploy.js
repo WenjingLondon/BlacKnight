@@ -18,11 +18,17 @@ async function main() {
   const aavePoolAddress = await aaveStrategy.aavePool();
   console.log("AavePool deployed to:", aavePoolAddress);
 
-  const CurveStrategy = await ethers.getContractFactory("CurveStrategy");
-  const curveStrategy = await CurveStrategy.deploy();
-  await curveStrategy.waitForDeployment();
-  const curveStrategyAddress = await curveStrategy.getAddress();
-  console.log("CurveStrategy deployed to:", curveStrategyAddress);
+  // const CurveStrategy = await ethers.getContractFactory("CurveStrategy");
+  // const curveStrategy = await CurveStrategy.deploy();
+  // await curveStrategy.waitForDeployment();
+  // const curveStrategyAddress = await curveStrategy.getAddress();
+  // console.log("CurveStrategy deployed to:", curveStrategyAddress);
+
+  const SimpleStrategy = await ethers.getContractFactory("SimpleStrategy");
+  const simpleStrategy = await SimpleStrategy.deploy();
+  await simpleStrategy.waitForDeployment();
+  const simpleStrategyAddress = await simpleStrategy.getAddress();
+  console.log("SimpleStrategy deployed to:", simpleStrategyAddress);
 
   // 部署 StrategyFactory
   const StrategyFactory = await ethers.getContractFactory("StrategyFactory");

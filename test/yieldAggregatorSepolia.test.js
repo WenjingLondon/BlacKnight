@@ -6,15 +6,16 @@ const { JsonRpcProvider } = require("ethers");
 const {
   AGGREGATOR_ADDRESS,
   AAVE_STRATEGY_ADDRESS,
+  SIMPLE_STRATEGY_ADDRESS,
   CURVE_STRATEGY_ADDRESS,
   STRATEGY_FACTORY_ADDRESS,
   FEE_MANAGER_ADDRESS,
-  AAVE_ADDRESS,
+  WBTC_ADDRESS,
   ALCHEMY_KEY,
   PRIVATE_KEY,
 } = process.env;
 
-const AAVE_DECIMALS = 8;
+const WBTC_DECIMALS = 8;
 
 // Load contract ABIs
 const aggregatorJson = require("../artifacts/contracts/core/YieldAggregatorV1.sol/YieldAggregatorV1.json");
@@ -23,8 +24,11 @@ const aggregatorAbi = aggregatorJson.abi;
 const aaveStrategyJson = require("../artifacts/contracts/Strategies/AaveStrategy.sol/AaveStrategy.json");
 const aaveStrategyAbi = aaveStrategyJson.abi;
 
-const curveStrategyJson = require("../artifacts/contracts/Strategies/CurveStrategy.sol/CurveStrategy.json");
-const curveStrategyAbi = curveStrategyJson.abi;
+// const curveStrategyJson = require("../artifacts/contracts/Strategies/CurveStrategy.sol/CurveStrategy.json");
+// const curveStrategyAbi = curveStrategyJson.abi;
+
+const simpleStrategyJson = require("../artifacts/contracts/Strategies/SimpleStrategy.sol/SimpleStrategy.json");
+const simpleStrategyAbi = simpleStrategyJson.abi;
 
 const strategyFactoryJson = require("../artifacts/contracts/Strategies/StrategyFactory.sol/StrategyFactory.json");
 const strategyFactoryAbi = strategyFactoryJson.abi;
@@ -46,14 +50,15 @@ describe("YieldAggregatorV1 Sepolia Test", function () {
     feeManager,
     aggregator,
     aaveStrategy,
-    curveStrategy;
+    curveStrategy,
+    simpleStrategy;
   let provider;
 
   before(async () => {
     provider = new JsonRpcProvider(rpcUrl);
     wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 
-    token = await ethers.getContractAt("IERC20", AAVE_ADDRESS, wallet);
+    token = await ethers.getContractAt("IERC20", WBTC_ADDRESS, wallet);
     console.log("Token:", token.target);
 
     aggregator = new ethers.Contract(AGGREGATOR_ADDRESS, aggregatorAbi, wallet);
@@ -73,6 +78,13 @@ describe("YieldAggregatorV1 Sepolia Test", function () {
     // );
     // console.log("Curve Strategy:", curveStrategy.target);
 
+    simpleStrategy = new ethers.Contract(
+      SIMPLE_STRATEGY_ADDRESS,
+      simpleStrategyAbi,
+      wallet
+    );
+    console.log("Simple Strategy:", simpleStrategy.target);
+
     strategyFactory = new ethers.Contract(
       STRATEGY_FACTORY_ADDRESS,
       strategyFactoryAbi,
@@ -89,20 +101,20 @@ describe("YieldAggregatorV1 Sepolia Test", function () {
 
     const balance = await token.balanceOf(wallet.address);
     console.log(
-      "User AAVE Balance:",
-      ethers.formatUnits(balance, AAVE_DECIMALS)
+      "User WBTC Balance:",
+      ethers.formatUnits(balance, WBTC_DECIMALS)
     );
 
     const allowance = await token.allowance(wallet.address, AGGREGATOR_ADDRESS);
-    console.log("Allowance:", ethers.formatUnits(allowance, AAVE_DECIMALS));
+    console.log("Allowance:", ethers.formatUnits(allowance, WBTC_DECIMALS));
 
-    if (allowance < ethers.parseUnits("1", AAVE_DECIMALS)) {
+    if (allowance < ethers.parseUnits("1", WBTC_DECIMALS)) {
       const tx = await token.approve(
         AGGREGATOR_ADDRESS,
-        ethers.parseUnits("1", AAVE_DECIMALS)
+        ethers.parseUnits("1", WBTC_DECIMALS)
       );
       await tx.wait();
-      console.log("AAVE approved to aggregator");
+      console.log("WBTC approved to aggregator");
     }
 
     //Add Aave Strategy
@@ -113,16 +125,13 @@ describe("YieldAggregatorV1 Sepolia Test", function () {
       console.log("Failed to add Aave strategy:", error.message);
     }
 
-    //Add USDT Strategy
-    // try {
-    //   await strategyFactory.addStrategy(
-    //     "0xaa8e23fb1079ea71e0a56f48a2aa51851d8433d0",
-    //     aaveStrategy.target
-    //   );
-    //   console.log("USDT strategy added");
-    // } catch (error) {
-    //   console.log("Failed to add USDT strategy:", error.message);
-    // }
+    //Add Simple Strategy
+    try {
+      await strategyFactory.addStrategy(token.target, simpleStrategy.target);
+      console.log("Simple strategy added");
+    } catch (error) {
+      console.log("Failed to add Simple strategy:", error.message);
+    }
 
     //Check if Aave strategy is valid
     const isAaveValid = await strategyFactory.isValidStrategy(
@@ -131,21 +140,26 @@ describe("YieldAggregatorV1 Sepolia Test", function () {
     );
     console.log("Is Aave strategy valid:", isAaveValid);
 
-    const isUSDTValid = await strategyFactory.isValidStrategy(
-      "0xaa8e23fb1079ea71e0a56f48a2aa51851d8433d0",
-      aaveStrategy.target
+    //Check if Simple strategy is valid
+    const isSimpleValid = await strategyFactory.isValidStrategy(
+      token.target,
+      simpleStrategy.target
     );
-    console.log("Is USDT strategy valid:", isUSDTValid);
+    console.log("Is Simple strategy valid:", isSimpleValid);
   });
 
   it("should check strategy APYs", async () => {
     try {
       // Check Aave APY
-      const aaveAPY = await aaveStrategy.getAPY(AAVE_ADDRESS);
+      const aaveAPY = await aaveStrategy.getAPY(WBTC_ADDRESS);
       console.log(`Aave APY: ${aaveAPY}`);
 
+      // Check Simple APY
+      const simpleAPY = await simpleStrategy.getAPY(WBTC_ADDRESS);
+      console.log(`Simple APY: ${simpleAPY}`);
+
       // Get best strategy
-      const bestStrategy = await strategyFactory.getBestStrategy(AAVE_ADDRESS);
+      const bestStrategy = await strategyFactory.getBestStrategy(WBTC_ADDRESS);
       console.log(`Best strategy: ${bestStrategy}`);
     } catch (error) {
       console.error("APY check failed:", error);
@@ -153,67 +167,67 @@ describe("YieldAggregatorV1 Sepolia Test", function () {
   });
 
   it("should deposit and withdraw via AaveStrategy", async () => {
-    const depositAmount = ethers.parseUnits("0.01", AAVE_DECIMALS);
+    const depositAmount = ethers.parseUnits("0.01", WBTC_DECIMALS);
 
     const beforeBalance = await token.balanceOf(wallet.address);
     console.log(
       "Before Deposit:",
-      ethers.formatUnits(beforeBalance, AAVE_DECIMALS)
+      ethers.formatUnits(beforeBalance, WBTC_DECIMALS)
     );
 
-    const depositTx = await aggregator.deposit(AAVE_ADDRESS, depositAmount);
+    const depositTx = await aggregator.deposit(WBTC_ADDRESS, depositAmount);
     await depositTx.wait();
     console.log("Deposit successful");
 
     const afterBalance = await token.balanceOf(wallet.address);
     console.log(
       "After Deposit:",
-      ethers.formatUnits(afterBalance, AAVE_DECIMALS)
+      ethers.formatUnits(afterBalance, WBTC_DECIMALS)
     );
 
-    const strategyBalance = await aaveStrategy.getTotalBalance(AAVE_ADDRESS);
+    const strategyBalance = await aaveStrategy.getTotalBalance(WBTC_ADDRESS);
     console.log(
       "Strategy aToken Balance:",
-      ethers.formatUnits(strategyBalance, AAVE_DECIMALS)
+      ethers.formatUnits(strategyBalance, WBTC_DECIMALS)
     );
 
     const poolAddress = await aaveStrategy.aavePool();
     console.log("Strategy aavePool address:", poolAddress);
 
     const strategyATokenBalance = await aaveStrategy.getTotalBalance(
-      AAVE_ADDRESS
+      WBTC_ADDRESS
     );
     console.log(
       "Strategy aToken balance before withdraw:",
-      ethers.formatUnits(strategyATokenBalance, AAVE_DECIMALS)
+      ethers.formatUnits(strategyATokenBalance, WBTC_DECIMALS)
     );
 
-    const aTokenAddress = await aaveStrategy.aTokens(AAVE_ADDRESS);
+    const aTokenAddress = await aaveStrategy.aTokens(WBTC_ADDRESS);
     console.log("aToken Address before withdraw:", aTokenAddress);
 
     const aToken = await ethers.getContractAt("IERC20", aTokenAddress, wallet);
     const aTokenBalance = await aToken.balanceOf(wallet.address);
     console.log(
       "aToken Balance before withdraw:",
-      ethers.formatUnits(aTokenBalance, AAVE_DECIMALS)
+      ethers.formatUnits(aTokenBalance, WBTC_DECIMALS)
     );
 
     const aTokenBalanceAggregator = await aToken.balanceOf(aggregator.target);
     console.log(
       "aToken Balance in aggregator:",
-      ethers.formatUnits(aTokenBalanceAggregator, AAVE_DECIMALS)
+      ethers.formatUnits(aTokenBalanceAggregator, WBTC_DECIMALS)
     );
 
     const approveTx = await aToken.approve(
       AAVE_STRATEGY_ADDRESS,
-      ethers.parseUnits("0.01", AAVE_DECIMALS)
+      ethers.parseUnits("0.01", WBTC_DECIMALS)
     );
     await approveTx.wait();
     console.log("aToken approved to strategy");
 
     const withdrawTx = await aaveStrategy.withdraw(
-      AAVE_ADDRESS,
-      ethers.parseUnits("0.005", AAVE_DECIMALS)
+      WBTC_ADDRESS,
+      ethers.parseUnits("0.005", WBTC_DECIMALS)
     );
     await withdrawTx.wait();
     console.log("Withdrawal successful");
@@ -221,17 +235,16 @@ describe("YieldAggregatorV1 Sepolia Test", function () {
     const afterWithdrawalBalance = await token.balanceOf(wallet.address);
     console.log(
       "After Withdrawal:",
-      ethers.formatUnits(afterWithdrawalBalance, AAVE_DECIMALS)
+      ethers.formatUnits(afterWithdrawalBalance, WBTC_DECIMALS)
     );
   });
-  // before(async () => {
   //   // Setup provider and wallet
   //   provider = new JsonRpcProvider(rpcUrl);
   //   owner = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
   //   console.log("Owner address:", owner.address);
 
   //   // Get USDT token contract
-  //   token = await ethers.getContractAt("IERC20", AAVE_ADDRESS, wallet);
+  //   token = await ethers.getContractAt("IERC20", WBTC_ADDRESS, wallet);
   //   console.log("Token:", token.target);
 
   //   // Get contract instances
