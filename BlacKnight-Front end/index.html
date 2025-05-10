@@ -25,6 +25,10 @@
             </ul>
         </nav>
            <button id="connectWallet" class="connect-wallet-btn">Connect Wallet</button>
+           <p id="walletAddress" style="font-weight: bold;"></p>
+           <p id="statusMessage" style="color: green;"></p>
+
+
     </div>
 </header>
 
@@ -34,7 +38,8 @@
         <h1>Welcome to BlacKnight</h1>
         <p>The Easiest Way to Invest In Crypto Passively</p>
         <div class="cta-buttons">
-            <a href="invest.html" class="btn">Start Investing</a>
+    <button id="startInvestingBtn" class="btn">Start Investing</button>
+
         </div>
     </div>
 </section>
@@ -98,10 +103,70 @@
     </div>
 </footer>
 
-<script src="script.js" defer></script>
+<!-- 引入 ethers.js 和其他脚本 -->
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script src="./config.js"></script>
+<script src="./abis/YieldAggregatorV1ABI.js"></script>
+<script src="./abis/IStrategy.js"></script>
+<script src="./abis/IStrategyManager.js"></script>
+<script src="./interaction.js"></script>
+
+<script>
+  // 定义全局变量，保持钱包地址
+
+let connectedWallet = null;
+
+document.getElementById("connectWallet").addEventListener("click", async () => {
+    console.log("Button clicked");
+
+    if (typeof window.ethereum === 'undefined') {
+        alert("Please install MetaMask or another wallet plugin.");
+        console.log("MetaMask is not installed.");
+        return;
+    }
+    
+    console.log("MetaMask detected");
+
+    try {
+        // 请求连接钱包
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+        // 获取当前用户的钱包地址
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        
+        if (accounts.length === 0) {
+            alert("No accounts found. Please check your MetaMask.");
+            return;
+        }
+
+        connectedWallet = accounts[0];  // 使用全局变量保存钱包地址
+        
+        console.log("Connected Wallet: " + connectedWallet);
+        
+        // 更新UI
+        document.getElementById("walletAddress").textContent = "Connected Wallet: " + connectedWallet;
+
+        document.getElementById("connectWallet").textContent = "Wallet Connected";
+        document.getElementById("statusMessage").textContent = "✅ Wallet connected. You can now start investing!"; 
+        document.getElementById("connectWallet").disabled = true;  // 禁用按钮
+
+    } catch (err) {
+        console.error("Connection Error: ", err);
+        alert("Failed to connect wallet. Please try again.");
+    }
+});
+
+      document.getElementById("startInvestingBtn").addEventListener("click", () => {
+    if (!connectedWallet) {
+        alert("⚠️ Please connect your wallet before investing.");
+        return;
+    }
+
+    // 跳转到 invest.html
+    window.location.href = "invest.html";
+});
+
+
+</script>
 </body>
 </html>
-
-
-
-
