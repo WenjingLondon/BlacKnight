@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Redeem</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Redeem Investment</h2>
+    <input type="text" id="tokenAddress" placeholder="Token Address" />
+    <input type="number" id="amount" placeholder="Amount to Redeem" />
+    <button onclick="redeem()">Redeem</button>
+    <p id="status"></p>
+  </div>
+  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+  <script src="redeem.js"></script>
+</body>
+</html>

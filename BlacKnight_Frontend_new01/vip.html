@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VIP Strategy Combination</title>
+  <link rel="stylesheet" href="vip.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- 左边菜单 -->
+    <aside class="sidebar">
+      <h2>Top Yields (APY) Today:</h2>
+      <ul>
+        <li>
+          <strong>* Aave Strategy: 8.3%</strong><br>
+        </li>
+        <li>
+          <strong>* Curve LP Boost: 7.5%</strong><br>
+        </li>
+        <li>
+          <strong>* ETH Leveraged: 10.2%</strong><br>
+        </li>
+      </ul>
+      <li><a href="index.html" style="font-size: 38px; font-weight: bold; color: Green;">Home</a></li>
+    </aside>
+
+    <!-- 主体区域 -->
+    <main class="main-content">
+      <h1>Customize Your VIP Portfolio</h1>
+
+      <form id="vip-form">
+        <section class="strategy-block">
+          <h3>Choose Existing Strategies</h3>
+          <div class="strategy-item">
+            <label>Aave Strategy Allocation (%)</label>
+            <input type="number" min="0" max="100" placeholder="e.g. 40" />
+          </div>
+          <div class="strategy-item">
+            <label>Curve Strategy Allocation (%)</label>
+            <input type="number" min="0" max="100" placeholder="e.g. 30" />
+          </div>
+        </section>
+
+        <section class="strategy-block">
+          <h3>Add New Strategy (Optional)</h3>
+          <input type="text" placeholder="New Strategy Name" />
+          <label>Allocation (%)</label>
+          <input type="number" min="0" max="100" placeholder="e.g. 20" />
+        </section>
+
+       <p style="color: red; font-weight: bold; margin-bottom: 10px;">
+  Note: Total allocation across strategies should equal 100%. Thank you.
+      </p>
+
+        <button type="submit">Submit Combination</button>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    // 简单 alert 提示
+    document.getElementById("vip-form").addEventListener("submit", function(event) {
+      event.preventDefault(); // 防止页面刷新
+      alert("Your strategy combination has been submitted!");
+    });
+  </script>
+</body>
+</html>
+

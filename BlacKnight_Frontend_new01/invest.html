@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Invest & Redeem</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="invest.css" />
+</head>
+<body>
+
+<div class="container">
+  <!-- 左侧 Token 列表 -->
+  <aside class="sidebar">
+    <h2>Token List</h2>
+    <ul class="token-list">
+      <li onclick="selectToken('WBTC')">WBTC</li>
+      <li style="color: gray; cursor: not-allowed;">DAI：Not Available Yet</li>
+      <li style="color: gray; cursor: not-allowed;">USDC：Not Available Yet</li>
+    </ul>
+    <li><a href="index.html" style="font-size: 38px; font-weight: bold; color: Green;">Home</a></li>
+  </aside>
+
+  <!-- 右侧主操作区域 -->
+  <main class="main-content">
+    <h1>Auto Yield</h1>
+
+    <div class="form-block">
+      <h3>Invest</h3>
+      <input type="text" id="tokenAddress" placeholder="Token Address" />
+      <input type="number" id="amount" placeholder="Amount to Invest" />
+      <button id="investBtn">Invest</button>
+    </div>
+
+    <div class="form-block">
+      <h3>Redeem</h3>
+      <input type="text" id="redeemTokenAddress" placeholder="Token Address" />
+      <input type="number" id="redeemAmount" placeholder="Amount to Redeem" />
+      <button id="redeemBtn">Redeem</button>
+    </div>
+
+    <p id="status"></p>
+  </main>
+</div>
+
+<!-- 引入 ethers.js & others -->
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script src="./config.js"></script>
+<script src="./abis/YieldAggregatorV1ABI.js"></script>
+<script src="./abis/IStrategy.js"></script>
+<script src="./abis/IStrategyManager.js"></script>
+<script src="./interaction.js"></script>
+
+
+<!-- 页面脚本 -->
+<script>
+  // 定义 Token 地址映射
+  const TOKEN_ADDRESSES = {
+    WBTC: "0x29f2D40B0605204364af54EC677bD022dA425d03"
+    // 后续添加更多支持的 token 时，在这里添加
+  };
+
+  // 点击左侧 Token 时执行
+  window.selectToken = function (symbol) {
+    const address = TOKEN_ADDRESSES[symbol];
+    if (address) {
+      document.getElementById("tokenAddress").value = address;
+      document.getElementById("redeemTokenAddress").value = address;
+
+      document.getElementById("amount").value = "";
+      document.getElementById("redeemAmount").value = "";
+
+      document.getElementById("status").innerText = `🪙 Selected token: ${symbol}`;
+    } else {
+      document.getElementById("status").innerText = `❌ ${symbol} is not available yet.`;
+    }
+  };
+
+  // 处理投资按钮
+document.getElementById("investBtn").addEventListener("click", async () => {
+    const token = document.getElementById("tokenAddress").value;
+    const amount = document.getElementById("amount").value;
+    try {
+      await window.interaction.depositToken(token, amount); 
+      document.getElementById("status").innerText = "✅ Investment successful!";
+    } catch (err) {
+      console.error(err);
+      document.getElementById("status").innerText = "❌ Investment failed.";
+    }
+  });
+
+  // 处理赎回按钮
+  document.getElementById("redeemBtn").addEventListener("click", async () => {
+    const token = document.getElementById("redeemTokenAddress").value;
+    const amount = document.getElementById("redeemAmount").value;
+    try {
+      await window.interaction.withdrawToken(token, amount); 
+      document.getElementById("status").innerText = "✅ Redemption successful!";
+    } catch (err) {
+      console.error(err);
+      document.getElementById("status").innerText = "❌ Redemption failed.";
+    }
+  });
+</script>
+
+</body>
+</html>

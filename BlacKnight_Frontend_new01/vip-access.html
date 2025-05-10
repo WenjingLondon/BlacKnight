@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VIP Access</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="features.css" />
+</head>
+<body>
+
+<!-- Fixed navigation bar -->
+<header class="navbar">
+  <div class="container">
+    <div class="navbar-logo">
+      <img src="logo.png" alt="Project Logo" class="logo">
+      <span class="project-name">BlacKnight</span>
+    </div>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="features.html">Features</a></li>         
+        <li><a href="subscribe.html">Subscribe</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- VIP Access Section -->
+<div class="vip-access">
+  <style>
+    body {
+      position: relative; 
+      background-image: url("vip_background_img.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 100px;
+      height: 100vh; 
+      margin: 0; 
+      display: flex;
+      justify-content: center;     /* 水平居中 */
+      align-items: center;         /* 垂直居中 */
+    }
+
+    body::before {
+      content: ""; 
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(173, 216, 230, 0.5); 
+      z-index: -1; 
+    }
+
+    .access-box {
+      background-color: rgba(0, 0, 0, 0.8);
+      border-radius: 12px;
+      display: inline-block;
+      padding: 30px 40px;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 15px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background-color: #00BFFF; 
+      color: white; 
+    }
+  </style>
+
+  <div class="access-box">
+    <h2>Welcome to the VIP Access</h2>
+    <p>Please connect your VIP wallet.</p>
+    <p>If you are not a registered VIP, please contact our sales team.</p>
+    <button id="connectWallet">Connect Wallet</button>
+    <p id="status-message"></p>
+  </div>
+</div>
+
+<!-- Include interaction.js -->
+<script src="interaction.js"></script>
+
+<script>
+  document.getElementById("connectWallet").addEventListener("click", async () => {
+    if (typeof window.ethereum === 'undefined') {
+      alert("Please install MetaMask or another wallet plugin.");
+      return;
+    }
+
+    try {
+      const user = await window.interaction.getCurrentUser();
+      const isVIP = await window.interaction.isVIPUser();
+
+      const statusMessage = document.getElementById("status-message");
+
+      if (isVIP) {
+        statusMessage.textContent = "Verification successful, redirecting...";
+        setTimeout(() => {
+          window.location.href = "vip.html";
+        }, 1500);
+      } else {
+        statusMessage.textContent = "This wallet is not registered as a VIP user.";
+      }
+    } catch (err) {
+      console.error(err);
+      document.getElementById("status-message").textContent = "Connection failed, please try again.";
+    }
+  });
+</script>
+
+</body>
+</html>
+
+
