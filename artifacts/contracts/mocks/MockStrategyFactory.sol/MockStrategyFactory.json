@@ -1,0 +1,54 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "MockStrategyFactory",
+  "sourceName": "contracts/mocks/MockStrategyFactory.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_strategy",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "getBestStrategy",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "strategy",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x60803461007357601f61015038819003918201601f19168301916001600160401b038311848410176100785780849260209460405283398101031261007357516001600160a01b0381169081900361007357600080546001600160a01b03191691909117905560405160c1908161008f8239f35b600080fd5b634e487b7160e01b600052604160045260246000fdfe6080806040526004361015601257600080fd5b600090813560e01c908163a8c62e76146069575063a9afd13e14603457600080fd5b3460665760203660031901126066576001600160a01b03600435818116036062576020915416604051908152f35b5080fd5b80fd5b9050346062578160031936011260625790546001600160a01b03168152602090f3fea26469706673582212203767c735e2af511529037aab3ebb11cf23b15adc1fa0c10f6dccf1cdd16f903464736f6c63430008140033",
+  "deployedBytecode": "0x6080806040526004361015601257600080fd5b600090813560e01c908163a8c62e76146069575063a9afd13e14603457600080fd5b3460665760203660031901126066576001600160a01b03600435818116036062576020915416604051908152f35b5080fd5b80fd5b9050346062578160031936011260625790546001600160a01b03168152602090f3fea26469706673582212203767c735e2af511529037aab3ebb11cf23b15adc1fa0c10f6dccf1cdd16f903464736f6c63430008140033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

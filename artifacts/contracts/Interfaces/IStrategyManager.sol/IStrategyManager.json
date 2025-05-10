@@ -1,0 +1,107 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IStrategyManager",
+  "sourceName": "contracts/Interfaces/IStrategyManager.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "strategy",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "allocation",
+          "type": "uint256"
+        }
+      ],
+      "name": "StrategyAssigned",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address[]",
+          "name": "strategies",
+          "type": "address[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "allocations",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "StrategyRebalanced",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_strategy",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_allocation",
+          "type": "uint256"
+        }
+      ],
+      "name": "assignStrategy",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
+        {
+          "internalType": "address[]",
+          "name": "_strategies",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_allocations",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "rebalance",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

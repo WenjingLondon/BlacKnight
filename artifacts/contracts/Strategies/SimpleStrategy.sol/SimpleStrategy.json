@@ -1,0 +1,104 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "SimpleStrategy",
+  "sourceName": "contracts/Strategies/SimpleStrategy.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "deposit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        }
+      ],
+      "name": "getAPY",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        }
+      ],
+      "name": "getATokenAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        }
+      ],
+      "name": "getTotalBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdraw",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080806040523461001a576001805561020b90816100208239f35b600080fdfe604060808152600436101561001357600080fd5b600090813560e01c806347e7ef241461017d578063711cc00514610158578063c4f9870b14610130578063d3d38193146100fa5763f3fef3a31461005657600080fd5b346100f657806003193601126100f65761006e6101ba565b6001600160a01b031680835260208390528183205460243592919083116100bb57835282602052822080549182039182116100a7575580f35b634e487b7160e01b83526011600452602483fd5b815162461bcd60e51b8152602060048201526014602482015273496e73756666696369656e742062616c616e636560601b6044820152606490fd5b5080fd5b50346100f65760203660031901126100f65760209181906001600160a01b036101216101ba565b16815280845220549051908152f35b50346100f65760203660031901126100f65760209061014d6101ba565b506001549051908152f35b50346100f65760203660031901126100f657906020916101766101ba565b5051908152f35b50346100f657806003193601126100f6576001600160a01b0361019e6101ba565b16825281602052812080549060243582018092116100a7575580f35b600435906001600160a01b03821682036101d057565b600080fdfea2646970667358221220dfb28b09a18328bf10a0ddf98ae757baf825c0f38b35785a4f99d37eb390dec864736f6c63430008140033",
+  "deployedBytecode": "0x604060808152600436101561001357600080fd5b600090813560e01c806347e7ef241461017d578063711cc00514610158578063c4f9870b14610130578063d3d38193146100fa5763f3fef3a31461005657600080fd5b346100f657806003193601126100f65761006e6101ba565b6001600160a01b031680835260208390528183205460243592919083116100bb57835282602052822080549182039182116100a7575580f35b634e487b7160e01b83526011600452602483fd5b815162461bcd60e51b8152602060048201526014602482015273496e73756666696369656e742062616c616e636560601b6044820152606490fd5b5080fd5b50346100f65760203660031901126100f65760209181906001600160a01b036101216101ba565b16815280845220549051908152f35b50346100f65760203660031901126100f65760209061014d6101ba565b506001549051908152f35b50346100f65760203660031901126100f657906020916101766101ba565b5051908152f35b50346100f657806003193601126100f6576001600160a01b0361019e6101ba565b16825281602052812080549060243582018092116100a7575580f35b600435906001600160a01b03821682036101d057565b600080fdfea2646970667358221220dfb28b09a18328bf10a0ddf98ae757baf825c0f38b35785a4f99d37eb390dec864736f6c63430008140033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
