@@ -2,13 +2,17 @@ window.interaction = window.interaction || {};
 
 window.interaction.getCurrentUser = async function () {
   const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-  return accounts[0].toLowerCase();
+  return accounts[0].toLowerCase();  // 强制小写
 };
 
 window.interaction.isVIPUser = async function () {
-  const user = await window.interaction.getCurrentUser();
-  return VIP_USERS.includes(user);
+  const user = await window.interaction.getCurrentUser(); // 不重复请求
+  return VIP_USERS.map(addr => addr.toLowerCase()).includes(user); // 全部转小写后比较
 };
+
+const ERC20_ABI = [
+  "function approve(address spender, uint256 amount) public returns (bool)"
+];
 
 // 从 config.js 中解构出配置项
 const {
@@ -53,6 +57,13 @@ async function getStrategyInstance(address) {
 }
 
 // ✅ 普通用户功能（YieldAggregatorV1）
+
+window.interaction.approveToken = async function (tokenAddress, spenderAddress, amount) {
+  const signer = await getSigner();
+  const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, signer);
+  return await tokenContract.approve(spenderAddress, amount);
+};
+
 window.interaction.depositToken = async function (tokenAddress, amount) {
   const aggregator = await getAggregatorInstance();  // 获取合约实例
   return await aggregator.deposit(tokenAddress, amount);

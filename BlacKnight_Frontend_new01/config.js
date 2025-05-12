@@ -10,11 +10,11 @@ window.config = {
   // VIP 策略管理合约地址
   VIP_STRATEGY_MANAGER_ADDRESS: "0x2C73E311eBA03ffAB5EE64e615cF21DbdDbeA7d7",
 
-  // VIP wallet list（务必小写）
+  // VIP wallet list（务必小写）可添加更多 VIP 地址
   VIP_USERS: [
-    "0x5454518c95cf922b139b77c0888167be429d3fc5"
-    // 可添加更多 VIP 地址（必须小写）
-  ],
+  "0x5454518c95cf922b139b77c0888167be429d3fc5",
+  "0x33f6885246020ecf1aa341008e1948eed0f4567a"
+],
 
   // 测试 Token 地址：WBTC
   WBTC_ADDRESS: "0x29f2D40B0605204364af54EC677bD022dA425d03",

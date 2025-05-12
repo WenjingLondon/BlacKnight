@@ -15,14 +15,16 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
+      justify-content: flex-start; /* changed to flex-start to align content from the top */
+      
+      padding: 20px; /* added padding for spacing */
+      min-height: 100vh; /* Changed from height to min-height to ensure enough space */
+      }
 
     h1 {
       font-size: 48px;
       margin-bottom: 20px;
-    }
+      text-align: center; /* Centered the title */    }
 
     p {
       font-size: 20px;
@@ -30,7 +32,7 @@
       text-align: center;
       line-height: 1.5;
     }
-  </style>
+    </style>
 </head>
 
 <body>
@@ -54,7 +56,15 @@
 
   <h1>About BlacKnight</h1>
   <p>
-    BlacKnight is a cutting-edge DeFi platform offering personalized yield strategies and automated portfolio management tailored for VIP users and general users alike.
+    At BlacKnight, we are committed to making decentralized finance (DeFi) accessible to everyone. Built on the groundbreaking Stablecoin 2.0 framework, our platform is designed with the beginner and passive investor in mind. Our mission is to bridge the gap between traditional finance and DeFi by offering a user-friendly, transparent, and secure way for individuals and businesses to invest in the rapidly evolving world of digital assets.
+
+BlacKnight’s Beta version will feature three risk-based investment strategies tailored to different investor profiles. These strategies are designed to help users with minimal experience navigate the complexities of DeFi, providing stable returns without the need for active management. For more advanced users and B2B clients, we offer a customizable strategy module, with the option to integrate Real World Assets (RWAs) into their portfolio.
+
+Our platform stands out by focusing on ease of use and clarity, helping newcomers avoid the intimidating complexity of typical DeFi products such as staking and lending protocols. We believe DeFi should be easy to understand, secure, and profitable for everyone, regardless of their experience level.
+
+Looking ahead, BlacKnight will continue to innovate. In the future, we’ll introduce an AI-powered assistant to optimize yield strategies, recommend liquidity pools, and guide users toward the most profitable investment opportunities. Additionally, we plan to implement a lightweight governance system, allowing our users to participate in decision-making processes and gradually decentralize the protocol over time.
+
+At BlacKnight, we’re not just building a platform — we’re shaping the future of finance. Join us as we make DeFi smarter, simpler, and more inclusive for everyone.
   </p>
 </body>
 </html>

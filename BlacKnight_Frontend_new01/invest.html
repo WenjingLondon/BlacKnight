@@ -77,30 +77,70 @@
   };
 
   // 处理投资按钮
-document.getElementById("investBtn").addEventListener("click", async () => {
-    const token = document.getElementById("tokenAddress").value;
-    const amount = document.getElementById("amount").value;
-    try {
-      await window.interaction.depositToken(token, amount); 
-      document.getElementById("status").innerText = "✅ Investment successful!";
-    } catch (err) {
-      console.error(err);
-      document.getElementById("status").innerText = "❌ Investment failed.";
-    }
-  });
+ document.getElementById("investBtn").addEventListener("click", async () => {
+  const token = document.getElementById("tokenAddress").value;
+  const amount = document.getElementById("amount").value;
+
+  // 确保用户输入了一个有效的金额
+  if (!amount || isNaN(amount) || amount <= 0) {
+    document.getElementById("status").innerText = "❌ Please enter a valid amount.";
+    return;
+  }
+
+  try {
+    // ✅ Step 1：approve Aggregator user token，确保授权金额正确
+    console.log("Approving token...");
+    
+    // 将金额转换为适合的单位（假设 token 使用 18 位小数）
+    const approveAmount = ethers.utils.parseUnits(amount, 18);
+    
+    // 调用 approveToken
+    await window.interaction.approveToken(token, DEFAULT_AGGREGATOR_ADDRESS, approveAmount);
+    console.log("Token approved.");
+
+    // ✅ Step 2：执行存款
+    console.log("Depositing token...");
+    await window.interaction.depositToken(token, amount);
+    console.log("Deposit successful.");
+
+    document.getElementById("status").innerText = "✅ Investment successful!";
+  } catch (err) {
+    console.error("Error:", err);
+    document.getElementById("status").innerText = "❌ Investment failed.";
+  }
+});
+
 
   // 处理赎回按钮
   document.getElementById("redeemBtn").addEventListener("click", async () => {
-    const token = document.getElementById("redeemTokenAddress").value;
-    const amount = document.getElementById("redeemAmount").value;
-    try {
-      await window.interaction.withdrawToken(token, amount); 
-      document.getElementById("status").innerText = "✅ Redemption successful!";
-    } catch (err) {
-      console.error(err);
-      document.getElementById("status").innerText = "❌ Redemption failed.";
-    }
-  });
+  const token = document.getElementById("redeemTokenAddress").value;
+  const amount = document.getElementById("redeemAmount").value;
+
+  // 确保用户输入了一个有效的金额
+  if (!amount || isNaN(amount) || amount <= 0) {
+    document.getElementById("status").innerText = "❌ Please enter a valid redemption amount.";
+    return;
+  }
+
+  try {
+    console.log("Redeeming token...");
+
+    // 将金额转换为最小单位（假设是18位小数）
+    const redeemAmount = ethers.utils.parseUnits(amount, 18);
+
+    // 调用 withdrawToken 方法
+    await window.interaction.withdrawToken(token, redeemAmount);
+    console.log("Redemption successful.");
+
+    document.getElementById("status").innerText = "✅ Redemption successful!";
+
+    // 更新余额
+    await updateUserBalance(token);
+  } catch (err) {
+    console.error("Error:", err);
+    document.getElementById("status").innerText = "❌ Redemption failed.";
+  }
+});
 </script>
 
 </body>

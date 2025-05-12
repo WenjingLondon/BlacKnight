@@ -84,11 +84,15 @@
     <p>If you are not a registered VIP, please contact our sales team.</p>
     <button id="connectWallet">Connect Wallet</button>
     <p id="status-message"></p>
+    
   </div>
 </div>
 
 <!-- Include interaction.js -->
-<script src="interaction.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script src="./config.js"></script>
+<script src="./abis/IStrategyManager.js"></script> 
+<script src="./interaction.js"></script>
 
 <script>
   document.getElementById("connectWallet").addEventListener("click", async () => {
@@ -98,9 +102,8 @@
     }
 
     try {
-      const user = await window.interaction.getCurrentUser();
+      
       const isVIP = await window.interaction.isVIPUser();
-
       const statusMessage = document.getElementById("status-message");
 
       if (isVIP) {
